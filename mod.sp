@@ -1,3 +1,3 @@
-mod "local" {
+mod "jgupta-deere" {
   title = "mymod"
 }
