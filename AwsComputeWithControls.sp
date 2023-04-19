@@ -31,6 +31,33 @@ dashboard "my_s3_dashboard" {
   container {
     title = "Analysis"
 
+	chart {
+      title = "Buckets by Account"
+      sql = <<-EOQ
+        select
+		  split_part(arn, ':', 3) as service,
+		  case
+			when length(split_part(arn, ':', 7)) = 0 then case
+			  when POSITION('/' in split_part(arn, ':', 6)) = 0 then null
+			  else split_part(split_part(arn, ':', 6), '/', 1)
+			end
+			else split_part(split_part(arn, ':', 6), '/', 1) --split_part(arn, ':', 6)
+		  end as resType,
+		  account_id,
+		  count(*) --, arn
+		from
+		  aws_tagging_resource
+		group by
+		  service,
+		  resType,
+		  account_id --, arn
+		order by
+		  account_id,
+		  service
+      EOQ
+      type  = "column"
+      width = 6
+    }
     chart {
       title = "Buckets by Account"
       sql = <<-EOQ
