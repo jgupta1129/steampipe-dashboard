@@ -32,66 +32,52 @@ dashboard "my_s3_dashboard" {
     title = "Analysis"
 
 	chart {
-      title = "Buckets by Account"
+      title = "Services and Resources for Account EOD-Devl (663554031644)"
       sql = <<-EOQ
         select
-		  split_part(arn, ':', 3) as service,
+		  split_part(arn, ':', 3) || '--' ||
 		  case
 			when length(split_part(arn, ':', 7)) = 0 then case
 			  when POSITION('/' in split_part(arn, ':', 6)) = 0 then null
 			  else split_part(split_part(arn, ':', 6), '/', 1)
 			end
 			else split_part(split_part(arn, ':', 6), '/', 1) --split_part(arn, ':', 6)
-		  end as resType,
-		  account_id,
+		  end as service_and_ResType,
 		  count(*) --, arn
 		from
-		  aws_tagging_resource
+		  aws_eo_devl.aws_tagging_resource
 		group by
-		  service,
-		  resType,
-		  account_id --, arn
+		  service_and_ResType
 		order by
-		  account_id,
-		  service
+			service_and_ResType
       EOQ
       type  = "column"
       width = 6
     }
-    chart {
-      title = "Buckets by Account"
+	chart {
+      title = "Services and Resources for Account Sourcing Management-Devl (063483230045)"
       sql = <<-EOQ
         select
-          a.title as "account",
-          count(i.*) as "total"
-        from
-          aws_s3_bucket as i,
-          aws_account as a
-        where
-          a.account_id = i.account_id
-        group by
-          account
-        order by count(i.*) desc
+		  split_part(arn, ':', 3) || '--' ||
+		  case
+			when length(split_part(arn, ':', 7)) = 0 then case
+			  when POSITION('/' in split_part(arn, ':', 6)) = 0 then null
+			  else split_part(split_part(arn, ':', 6), '/', 1)
+			end
+			else split_part(split_part(arn, ':', 6), '/', 1) --split_part(arn, ':', 6)
+		  end as service_and_ResType,
+		  count(*) --, arn
+		from
+		  aws_sm_devl.aws_tagging_resource
+		group by
+		  service_and_ResType
+		order by
+			service_and_ResType
       EOQ
       type  = "column"
       width = 6
     }
-
-
-    chart {
-      title = "Buckets by Region"
-      sql = <<-EOQ
-        select
-          region,
-          count(i.*) as total
-        from
-          aws_s3_bucket as i
-        group by
-          region
-      EOQ
-      type  = "column"
-      width = 6
-    }
+    
   }
 
 }
