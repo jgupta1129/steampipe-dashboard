@@ -66,7 +66,7 @@ dashboard "deere_scs_aws_accounts_dashboard" {
 	  width = 6
 	  query = query.get_aws_account_services_and_their_count
 	  args  = {
-		"account_id" = "663554031644"
+		"account_id" = "063483230045"
 	  }
 	}
   }
