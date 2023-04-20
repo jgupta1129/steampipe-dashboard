@@ -31,6 +31,49 @@ query "get_aws_account_services_and_their_count" {
 	param "account_id" {}
 }
 
+query "get_aws_account_sg_open_to_public" {
+	sql = <<-EOQ
+		SELECT
+		  'Security Group Allowing Public Access for account ' || account_id as label,
+		  count(*) as value,
+		  case
+			when count(*) > 0 then 'alert'
+			else 'ok'
+		  end as type
+		FROM
+		  aws_vpc_security_group_rule
+		where
+		  type = 'ingress'
+		  and cidr_ip = '0.0.0.0/0'
+		  and account_id = $1
+		group by
+		  label
+	EOQ
+	
+	param "account_id" {}
+}
+
+query "get_aws_account_alb_internet_facing" {
+	sql = <<-EOQ
+		SELECT
+		  'ALB Internet Facing for account ' || account_id as label,
+		  count(*) as value,
+		  case
+			when count(*) > 0 then 'alert'
+			else 'ok'
+		  end as type
+		FROM
+		  aws_ec2_application_load_balancer
+		where
+		  scheme = 'internet-facing'
+		  and account_id = $1
+		group by
+		  label		  
+	EOQ
+	
+	param "account_id" {}
+}
+  
 query "get_aws_account_services_being_used" {
 	sql = <<-EOQ
 		select
@@ -49,6 +92,37 @@ query "get_aws_account_services_being_used" {
 dashboard "deere_scs_aws_accounts_dashboard" {
 
   title = "Deere SCS AWS Accounts Dashboard"
+  
+  container {
+	card {
+	  width = 2
+	  query = query.get_aws_account_sg_open_to_public
+      args  = {
+        "account_id" = "063483230045"
+      }
+	}
+	card {
+	  width = 2
+	  query = query.get_aws_account_alb_internet_facing
+      args  = {
+        "account_id" = "063483230045"
+      }
+	}
+	card {
+	  width = 2
+	  query = query.get_aws_account_sg_open_to_public
+      args  = {
+        "account_id" = "663554031644"
+      }
+	}
+	card {
+	  width = 2
+	  query = query.get_aws_account_alb_internet_facing
+      args  = {
+        "account_id" = "663554031644"
+      }
+	}
+  }
 
   container {
 	chart {
@@ -69,6 +143,36 @@ dashboard "deere_scs_aws_accounts_dashboard" {
 		"account_id" = "063483230045"
 	  }
 	}
+  }
+  
+  container {
+	chart {
+	  title = "Mix-Chart Services used for Account Sourcing Management-Devl (063483230045)"
+      type  = "column"
+	  width = 12
+	  sql = <<-EOQ
+		select
+			  split_part(arn, ':', 3) as service, split_part(arn, ':', 3) || COALESCE(
+				'--' || case
+				  when length(split_part(arn, ':', 7)) = 0 then case
+					when POSITION('/' in split_part(arn, ':', 6)) = 0 then null
+					else split_part(split_part(arn, ':', 6), '/', 1)
+				  end
+				  else split_part(split_part(arn, ':', 6), '/', 1)
+				end,
+				''
+			  ) as service_and_ResType,
+			  count(*) as cnt
+			from
+			  aws_tagging_resource
+			where
+				account_id = '063483230045'
+			group by
+			  service, service_and_ResType	
+		order by
+		  service_and_ResType	
+	  EOQ
+    }
   }
   
   container {
