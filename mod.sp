@@ -1,3 +1,3 @@
 mod "jgupta-deere" {
-  title = "mymod"
+  title = "Deere SCS"
 }
