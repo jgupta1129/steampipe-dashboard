@@ -53,7 +53,7 @@ dashboard "deere_scs_aws_accounts_dashboard" {
 			order by
 				service_and_ResType
 		  EOQ
-		  type  = "bar"
+		  type  = "column"
 		}
   }
 
