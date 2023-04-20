@@ -31,7 +31,6 @@ dashboard "deere_scs_aws_accounts_dashboard" {
     title = "Services and Resources for Account Sourcing Management-Devl (063483230045)"
 
 	chart {
-      title = "Services and Resources for Account Sourcing Management-Devl (063483230045)"
       type  = "pie"
 	  width = 6
 	  query = query.get_aws_account_services_and_their_count
@@ -41,6 +40,7 @@ dashboard "deere_scs_aws_accounts_dashboard" {
     }
 	table {
       width = 6
+	  type = "line"
       query = query.get_aws_account_services_and_their_count
       args  = {
         "account_id" = "063483230045"
@@ -52,16 +52,17 @@ dashboard "deere_scs_aws_accounts_dashboard" {
 		title = "Services and Resources for Account EOD-Devl (663554031644)"
 
 		chart {
-		  title = "Services and Resources for Account Sourcing Management-Devl (063483230045)"
 		  type  = "pie"
-		  width = 6
 		  query = query.get_aws_account_services_and_their_count
 		  args  = {
 			"account_id" = "663554031644"
 		  }
 		}
-		table {
-		  width = 6
+	}
+	container {
+		title = "Services and Resources for Account EOD-Devl (663554031644)"
+		table {		 
+		  type = "line"
 		  query = query.get_aws_account_services_and_their_count
 		  args  = {
 			"account_id" = "663554031644"
