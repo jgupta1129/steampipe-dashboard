@@ -62,7 +62,7 @@ dashboard "deere_scs_aws_accounts_dashboard" {
     }
 	chart {
 	  title = "Services and Sub-Resources Type for Account Sourcing Management-Devl (063483230045)"
-	  type  = "pie"
+	  type  = "donut"
 	  width = 6
 	  query = query.get_aws_account_services_and_their_count
 	  args  = {
