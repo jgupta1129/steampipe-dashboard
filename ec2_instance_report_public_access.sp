@@ -17,22 +17,6 @@ dashboard "ec2_instance_public_access_report" {
 
   }
 
-  table {
-    column "Account ID" {
-      display = "none"
-    }
-
-    column "ARN" {
-      display = "none"
-    }
-
-    column "Instance ID" {
-      href = "${dashboard.ec2_instance_detail.url_path}?input.instance_arn={{.ARN | @uri}}"
-    }
-
-    query = query.ec2_instance_public_access_table
-  }
-
 }
 
 query "ec2_instance_public_access_count" {
