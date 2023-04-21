@@ -100,6 +100,7 @@ dashboard "deere_scs_aws_accounts_dashboard" {
       args  = {
         "account_id" = "063483230045"
       }
+	  href  = "${dashboard.ec2_instance_public_access_report.url_path}"
 	}
 	card {
 	  width = 3
@@ -114,6 +115,7 @@ dashboard "deere_scs_aws_accounts_dashboard" {
       args  = {
         "account_id" = "663554031644"
       }
+	  href  = "${dashboard.ec2_instance_public_access_report.url_path}"
 	}
 	card {
 	  width = 3
